@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 """This module is for calling GitHub API in order to get the last commit time."""
 import requests
 import json
 from pprint import pprint
-
+import datetime
 
 
 ALL_REPOS_API_URL = 'https://api.github.com/users/%s/repos'
@@ -46,7 +47,6 @@ def did_user_commit(username, repos):
         pprint(commit_time)
 
 
-
 def get_commit_time(url):
     response = requests.get(url)
     json_data = json.loads(response.text)
@@ -55,8 +55,18 @@ def get_commit_time(url):
     return commit_time
 
 
+def github_date_to_localtime(commit_date_str):
+    commit_date = datetime.datetime.strptime(commit_date_str, '%Y-%m-%dT%H:%M:%SZ')
+    commit_date += datetime.timedelta(hours=9)
+
+    return commit_date
+
+
+def is_today(commit_date):
+    return commit_date.date() == datetime.date.today()
+
 
 """example test"""
-repos = get_all_repos('eminentstar')
-did_user_commit('eminentstar', repos)
+# repos = get_all_repos('eminentstar')
+# did_user_commit('eminentstar', repos)
 
