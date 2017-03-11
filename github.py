@@ -6,6 +6,9 @@ from pprint import pprint
 import datetime
 
 
+from configs import OAUTH_TOKEN
+
+
 ALL_REPOS_API_URL = 'https://api.github.com/users/%s/repos'
 LAST_COMMIT_HASH_API_URL = 'https://api.github.com/repos/%s/%s/git/refs/heads/master'
 LAST_COMMIT_TIME_URL = 'https://api.github.com/repos/%s/%s/git/commits/%s'
@@ -25,11 +28,11 @@ LAST_COMMIT_TIME_URL = 'https://api.github.com/repos/%s/%s/git/commits/%s'
 
 def get_all_repos(username):
     url = ALL_REPOS_API_URL % (username)
-    response = requests.get(url)
+    headers = {'Authorization': 'token %s' % (OAUTH_TOKEN)}
+    response = requests.get(url, headers=headers)
     json_data = json.loads(response.text)
      
     repos = []
-    pprint(json_data)
     for repo in json_data:
         repos.append(repo.get('name'))
 
@@ -37,9 +40,10 @@ def get_all_repos(username):
 
 
 def did_user_commit(username, repos):
+    headers = {'Authorization': 'token %s' % (OAUTH_TOKEN)}
     for repo_name in repos:
         url = LAST_COMMIT_HASH_API_URL % ('eminentstar', repo_name)
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         json_data = json.loads(response.text)
 
         commit_url = json_data.get('object').get('url')
@@ -48,7 +52,8 @@ def did_user_commit(username, repos):
 
 
 def get_commit_time(url):
-    response = requests.get(url)
+    headers = {'Authorization': 'token %s' % (OAUTH_TOKEN)}
+    response = requests.get(url, headers=headers)
     json_data = json.loads(response.text)
     commit_time = json_data.get('committer').get('date')
 
@@ -67,6 +72,7 @@ def is_today(commit_date):
 
 
 """example test"""
-# repos = get_all_repos('eminentstar')
+repos = get_all_repos('eminentstar')
+pprint(repos)
 # did_user_commit('eminentstar', repos)
 
