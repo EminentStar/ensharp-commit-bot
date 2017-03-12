@@ -1,13 +1,14 @@
+# -*- coding: utf-8 -*-
 from slacker import Slacker
 
 
 from configs import TOKEN
 from configs import COMMIT_CHANNEL
+from github import get_all_repos
+from github import check_user_commit
 
 
 slack = Slacker(TOKEN)
-
-# slack.chat.post_message('#1commit', 'Commit Bot Test')
 
 
 def send_commit_warning(username):
@@ -21,3 +22,18 @@ def send_commit_warning(username):
     attachments = [attachments_dict]
 
     slack.chat.post_message(channel=COMMIT_CHANNEL, text=None, attachments=attachments, as_user=False)
+
+
+def send_commit_warning_to_member(username):
+    repos = get_all_repos(username)
+    committed = check_user_commit(username, repos)
+
+    if committed is False:
+        print("Send Slack Warning!")
+        send_commit_warning(username)
+
+
+usernames = ['eminentstar']
+
+for username in usernames:
+    send_commit_warning_to_member(username)
