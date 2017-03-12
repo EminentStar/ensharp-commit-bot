@@ -44,7 +44,7 @@ def check_user_commit(username, repos):
     headers = {'Authorization': 'token %s' % (OAUTH_TOKEN)}
 
     for repo_name in repos:
-        url = LAST_COMMIT_HASH_API_URL % ('eminentstar', repo_name)
+        url = LAST_COMMIT_HASH_API_URL % (username, repo_name)
         response = requests.get(url, headers=headers)
         json_data = json.loads(response.text)
         pprint(json_data)
