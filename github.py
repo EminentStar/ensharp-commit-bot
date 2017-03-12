@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
 """This module is for calling GitHub API in order to get the last commit time."""
 import requests
 import json
 from pprint import pprint
+import datetime
 
+
+from configs import OAUTH_TOKEN
 
 
 ALL_REPOS_API_URL = 'https://api.github.com/users/%s/repos'
@@ -24,39 +28,65 @@ LAST_COMMIT_TIME_URL = 'https://api.github.com/repos/%s/%s/git/commits/%s'
 
 def get_all_repos(username):
     url = ALL_REPOS_API_URL % (username)
-    response = requests.get(url)
+    headers = {'Authorization': 'token %s' % (OAUTH_TOKEN)}
+    response = requests.get(url, headers=headers)
     json_data = json.loads(response.text)
      
     repos = []
-    pprint(json_data)
     for repo in json_data:
         repos.append(repo.get('name'))
 
     return repos
 
 
-def did_user_commit(username, repos):
+def check_user_commit(username, repos):
+    ret_val = False
+    headers = {'Authorization': 'token %s' % (OAUTH_TOKEN)}
+
     for repo_name in repos:
         url = LAST_COMMIT_HASH_API_URL % ('eminentstar', repo_name)
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         json_data = json.loads(response.text)
+        pprint(json_data)
+        
+        try:
+            commit_url = json_data.get('object').get('url')
+        except AttributeError as error: # when no repository exists
+            message = json_data.get('message')
+            print(message)
+            continue
 
-        commit_url = json_data.get('object').get('url')
-        commit_time = get_commit_time(commit_url)
-        pprint(commit_time)
+        commit_time_str = get_commit_time(commit_url)
+        committed = did_commit_today(commit_time_str)
 
+        if committed:
+            ret_val = True
+            break
+
+    return ret_val
+
+
+def did_commit_today(commit_time_str):
+    commit_time = github_date_to_localtime(commit_time_str)
+    ret_val = is_today(commit_time)
+    return ret_val
 
 
 def get_commit_time(url):
-    response = requests.get(url)
+    headers = {'Authorization': 'token %s' % (OAUTH_TOKEN)}
+    response = requests.get(url, headers=headers)
     json_data = json.loads(response.text)
     commit_time = json_data.get('committer').get('date')
 
     return commit_time
 
 
+def github_date_to_localtime(commit_date_str):
+    commit_time  = datetime.datetime.strptime(commit_date_str, '%Y-%m-%dT%H:%M:%SZ')
+    commit_time += datetime.timedelta(hours=9)
 
-"""example test"""
-repos = get_all_repos('eminentstar')
-did_user_commit('eminentstar', repos)
+    return commit_time
 
+
+def is_today(commit_time):
+    return commit_time.date() == datetime.date.today()
