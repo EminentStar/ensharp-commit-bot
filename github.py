@@ -4,14 +4,19 @@ import requests
 import json
 from pprint import pprint
 import datetime
+import configparser
 
 
-from configs import OAUTH_TOKEN
+Config = configparser.ConfigParser()
+Config.read('configs.ini')
 
+OAUTH_TOKEN = Config.get('Configuration', 'OAUTH_TOKEN')
 
 ALL_REPOS_API_URL = 'https://api.github.com/users/%s/repos'
 LAST_COMMIT_HASH_API_URL = 'https://api.github.com/repos/%s/%s/git/refs/heads/master'
 LAST_COMMIT_TIME_URL = 'https://api.github.com/repos/%s/%s/git/commits/%s'
+
+
 
 """
     0. Commit Group 유저리스트 체크
