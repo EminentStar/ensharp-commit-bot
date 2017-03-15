@@ -4,6 +4,7 @@ import datetime
 
 from github import github_date_to_localtime
 from github import is_today
+from github import did_commit_today
 
 
 class TestGithub(unittest.TestCase):
@@ -20,6 +21,12 @@ class TestGithub(unittest.TestCase):
         actual_1 = is_today(self.sample_date)
 
         self.assertTrue(expected_1, actual_1)
+    
+    def test_did_commit_today(self):
+        input = '1991-03-02T06:47:43Z'
+        expected = False
+        actual = did_commit_today(input)
+        self.assertEquals(expected, actual)
 
 
 if __name__ == '__main__':
