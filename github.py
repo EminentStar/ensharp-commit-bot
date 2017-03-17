@@ -7,6 +7,9 @@ import datetime
 import configparser
 
 
+from commitmember import CommitMember
+
+
 Config = configparser.ConfigParser()
 Config.read('configs.ini')
 
@@ -44,9 +47,12 @@ def get_all_repos(username):
     return repos
 
 
-def check_user_commit(username, repos):
+def check_user_commit(member):
     ret_val = False
     headers = {'Authorization': 'token %s' % (OAUTH_TOKEN)}
+
+    repos = member.repos
+    username = member.username
 
     for repo_name in repos:
         url = LAST_COMMIT_HASH_API_URL % (username, repo_name)
