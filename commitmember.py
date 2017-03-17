@@ -31,7 +31,6 @@ class CommitMember():
     def committed(self, input_committed):
         self.__committed = input_committed
 
-    
     @staticmethod
     def total_members(): # staticmethod does not need either parameter 'cls' or 'self'
         return CommitMember.member_count
@@ -40,3 +39,12 @@ class CommitMember():
     def total_members(cls): # classmethod needs the parameter 'cls'
         return CommitMember.member_count
     """
+   
+    def __repr__(self):
+        """For example: >> obj """
+        return "CommitMember('" + self.__username + "')"
+
+    def __str__(self):
+        """For example: >> print(obj) """
+        return "username: %s / repos: %s / committed: %s" %(self.__username, self.__repos, self.__committed)
+
