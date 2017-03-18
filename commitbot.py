@@ -5,6 +5,7 @@ import configparser
 
 from github import get_all_repos
 from github import check_user_commit
+from commitmember import CommitMember
 
 
 Config = configparser.ConfigParser()
@@ -29,10 +30,10 @@ def send_commit_warning(username):
     slack.chat.post_message(channel=COMMIT_CHANNEL, text=None, attachments=attachments, as_user=False)
 
 
-def send_commit_warning_to_member(username):
-    repos = get_all_repos(username)
-    committed = check_user_commit(username, repos)
+def send_commit_warning_to_member(member):
+    member.repos = get_all_repos(member.username)
+    member.committed = check_user_commit(member)
 
-    if committed is False:
-        print("[%s]Send Slack Warning!" % username)
-        send_commit_warning(username)
+    if member.committed is False:
+        print("[%s]Send Slack Warning!" % member.username)
+        send_commit_warning(member.username)

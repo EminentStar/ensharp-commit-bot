@@ -1,7 +1,12 @@
+"""This module executes commit examination once in a day """
 import schedule
 import time
 import configparser
 import json
+
+
+from commitbot import send_commit_warning_to_member
+from commitmember import CommitMember
 
 
 Config = configparser.ConfigParser()
@@ -12,8 +17,8 @@ print(usernames)
 
 def job():
     for username in usernames:
-        send_commit_warning_to_member(username)
-
+        member = CommitMember(username)
+        send_commit_warning_to_member(member)
 
 schedule.every().day.at("23:00").do(job)
 
