@@ -1,4 +1,5 @@
 configparser==3.5.0
+PyYAML==3.12
 requests==2.13.0
 schedule==0.4.2
 slacker==0.9.42
