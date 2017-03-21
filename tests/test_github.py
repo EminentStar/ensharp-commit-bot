@@ -26,7 +26,7 @@ class TestGithub(unittest.TestCase):
         input = '1991-03-02T06:47:43Z'
         expected = False
         actual = did_commit_today(input)
-        self.assertEqual(expected, actual)
+        self.assertEquals(expected, actual)
 
 
 if __name__ == '__main__':
